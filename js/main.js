@@ -2,7 +2,7 @@ var myAppModule = angular.module('MyApp', []);
 
 myAppModule.controller('TwitterCtrl', function($scope, $http, $timeout) {
     $scope.twitterFeed = [];
-    $scope.tweets = [];
+    $scope.tweets = [];    
 
     for (var key in localStorage) {
         $scope.twitterFeed.push(key);
@@ -13,7 +13,7 @@ myAppModule.controller('TwitterCtrl', function($scope, $http, $timeout) {
         var timer = $scope.timer;
 
         if ($scope.tim) {
-            clearInterval($scope.tim);
+            clearTimeout($scope.tim);
         }
         if (localStorage[hash]) {
             var data = localStorage[hash];
@@ -28,9 +28,13 @@ myAppModule.controller('TwitterCtrl', function($scope, $http, $timeout) {
                 if (data.length == 0) { 
                     $scope.placeholder = {text: 'no tweets found :('};
                     $scope.twitterFeed.pop();                    
-                } else {                                                     
+                } else {
+                    if (timer) {                        
+                        $scope.timeIsSet = true;
+                        $scope.tim = setTimeout(setTimer, timer*1000);            
+                    }                                            
                     $scope.placeholder = {text: ''};
-                    localStorage.setItem(hash, JSON.stringify(data));                
+                    localStorage.setItem(hash, JSON.stringify(data));
                 }
             });            
         }
@@ -38,25 +42,22 @@ myAppModule.controller('TwitterCtrl', function($scope, $http, $timeout) {
         
         //start of setTimer
         var setTimer = function () {
-            $http.get('./TwitterScraper.php', {params: {hash: hash}}).success(function(data, status, headers, config) {
-                $scope.tweets = data;
-                localStorage.setItem(hash, JSON.stringify(data));                
-            });  
-        }
-        //end of setTimer
-        if (timer) {
-            $scope.timeIsSet = true;            
-            $scope.tim = setInterval(setTimer, timer*1000);            
-        }
+            console.log('called');
+            $http.get('./TwitterScraper.php', {params: {hash: hash}}).success(
+                function(data, status, headers, config) {
+                        $scope.tweets = data;
+                        localStorage.setItem(hash, JSON.stringify(data));
+                        $scope.tim = setTimeout(setTimer, timer*1000);               
+                });  
+        }//end of setTimer
 
         $scope.stopTimer = function () {
-            clearInterval($scope.tim);
+            clearTimeout($scope.tim);
             $scope.timeIsSet = false;
         }
 
-
     }//end of $scope.getTweets function       
-});
+});//end of TwitterCtrl Controller
 
 myAppModule.controller('LocalStorageCtrl', function($scope) {
     $scope.clear = function () {
@@ -71,9 +72,6 @@ myAppModule.controller('LocalStorageCtrl', function($scope) {
         var key = $scope.twitterFeed[$index];
         var data = localStorage[key];
         $scope.$parent.tweets = JSON.parse(data);
+        $scope.$parent.scroll = 'scroll';
     }
-});
-
-myAppModule.controller('Timer', function($scope) {
-    
 });
