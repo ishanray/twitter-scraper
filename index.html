@@ -3,20 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <title>Twitter Scraper</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body ng-cloak>
     <div ng-controller="TwitterCtrl">
         <form ng-submit="getTweets()">
             <input ng-model="newTweet" type="text" placeholder="enter hashtag" required>
-            <input type="number" ng-controller="Timer">
+            <input type="number" ng-model="timer" placeholder="enter refresh time">
             <button>Search Twitter <span ng-show="timer">every {{timer}} seconds</span></button>            
         </form>
         <div ng-controller="LocalStorageCtrl">
             <button ng-click="clear()">Clear</button>
             <button ng-repeat="tweet in twitterFeed" ng-click="getLocalStorage($index)">{{tweet}}</button>
         </div>
+        <button ng-click="stopTimer()" ng-show="timeIsSet">Stop Refresh</button>
         <p>{{placeholder.text}}</p>
-        <ul>            
+        <ul class="scroll">            
             <li ng-repeat="tweet in tweets">{{tweet}}</li>
         </ul>
     </div>    
