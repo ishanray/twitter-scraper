@@ -15,15 +15,15 @@ myAppModule.controller('TwitterCtrl', function($scope, $http, $timeout) {
             $scope.tweets = JSON.parse(data);
         } else {
             $scope.placeholder = {text: 'getting tweets...'};            
-            $scope.twitterFeed.push($scope.newTweet);            
+            
+                $scope.twitterFeed.push($scope.newTweet);
+            
             $http.get('./TwitterScraper.php', {params: {hash: $scope.newTweet}}).success(function(data, status, headers, config) {
                 $scope.tweets = data;
                 if (data.length == 0) { 
                     $scope.placeholder = {text: 'no tweets found :('};
-                    $scope.twitterFeed.pop();
-                    clearTimeout(time);
-                } else {                    
-                    time = setTimeout($scope.getTweets, 5000);                    
+                    $scope.twitterFeed.pop();                    
+                } else {                                                     
                     $scope.placeholder = {text: ''};
                     localStorage.setItem(hash, JSON.stringify(data));                
                 }
