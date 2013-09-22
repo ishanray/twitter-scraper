@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en" ng-app="MyApp">
+<head>
+    <meta charset="UTF-8">
+    <title>Twitter Scraper</title>
+</head>
+<body ng-cloak>
+    <div ng-controller="TwitterCtrl">
+        <form ng-submit="getTweets()">
+            <input ng-model="newTweet" type="text" placeholder="enter hashtag" required>
+            <input type="number" ng-controller="Timer">
+            <button>Search Twitter <span ng-show="timer">every {{timer}} seconds</span></button>            
+        </form>
+        <div ng-controller="LocalStorageCtrl">
+            <button ng-click="clear()">Clear</button>
+            <button ng-repeat="tweet in twitterFeed" ng-click="getLocalStorage($index)">{{tweet}}</button>            
+        </div>
+        <p>{{placeholder.text}}</p>
+        <ul>            
+            <li ng-repeat="tweet in tweets">{{tweet}}</li>
+        </ul>
+    </div>    
+    <script src="js/angular.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
